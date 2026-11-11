@@ -49,7 +49,7 @@ export const SitePlanMap: FC<SitePlanMapProps> = ({
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <div className="h-full bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
       {/* Map Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b border-slate-200 bg-slate-50">
         <div className="flex items-center gap-4 text-xs text-slate-600">
@@ -115,12 +115,15 @@ export const SitePlanMap: FC<SitePlanMapProps> = ({
         </div>
       </div>
 
-      {/* Scrollable Map Canvas */}
-      <div className="overflow-auto max-h-[680px] bg-slate-100 p-4">
+      {/* Full-height Map Canvas */}
+      <div className="flex-1 min-h-0 overflow-hidden bg-slate-100 p-3 sm:p-4 flex items-center justify-center">
         <div
           ref={containerRef}
           onClick={handleImageClick}
-          style={{ width: `${zoom * 100}%` }}
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: 'center center',
+          }}
           className={`relative mx-auto transition-all duration-150 ${
             pinMode ? 'cursor-crosshair' : 'cursor-default'
           }`}
@@ -129,7 +132,7 @@ export const SitePlanMap: FC<SitePlanMapProps> = ({
             src={location.mapImageUrl}
             alt={`${location.name} Site Plan`}
             referrerPolicy="no-referrer"
-            className="w-full h-auto block rounded border border-slate-300 bg-white select-none"
+            className="block max-w-full max-h-full h-auto rounded border border-slate-300 bg-white select-none"
             draggable={false}
           />
 

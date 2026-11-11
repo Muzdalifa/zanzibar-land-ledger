@@ -152,7 +152,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
+    <div className="h-screen overflow-hidden bg-slate-50 text-slate-900 flex flex-col">
       {/* Top Bar Contract: 3 zones */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
@@ -231,9 +231,14 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main
+        className={`flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 sm:px-6 ${
+          activeTab === 'map' ? 'py-4 flex flex-col' : 'py-6 space-y-6 overflow-y-auto'
+        }`}
+      >
         {/* KPI Strip */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {activeTab !== 'map' && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <p className="text-xs text-slate-500 mb-1">Total Plots</p>
             <p className="text-2xl font-semibold font-mono-nums text-slate-900">{stats.total}</p>
@@ -255,10 +260,11 @@ export default function App() {
               </span>
             </p>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* Workspace Toolbar */}
-        {activeTab !== 'reminders' && activeTab !== 'records' && (
+        {activeTab !== 'reminders' && activeTab !== 'records' && activeTab !== 'map' && (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <select
@@ -314,16 +320,18 @@ export default function App() {
 
         {/* Active View */}
         {activeTab === 'map' && (
-          <SitePlanMap
-            location={currentLocation}
-            plots={filteredPlots}
-            selectedPlotId={selectedPlotId}
-            onSelectPlot={(plot) => setSelectedPlotId(plot.id)}
-            onAddPlotAtCoords={(x, y) => {
-              setPinCoords({ x, y });
-              setIsAddModalOpen(true);
-            }}
-          />
+          <div className="flex-1 min-h-0">
+            <SitePlanMap
+              location={currentLocation}
+              plots={filteredPlots}
+              selectedPlotId={selectedPlotId}
+              onSelectPlot={(plot) => setSelectedPlotId(plot.id)}
+              onAddPlotAtCoords={(x, y) => {
+                setPinCoords({ x, y });
+                setIsAddModalOpen(true);
+              }}
+            />
+          </div>
         )}
 
         {activeTab === 'boxes' && (
