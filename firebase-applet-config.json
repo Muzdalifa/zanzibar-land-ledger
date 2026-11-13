@@ -1,12 +1,12 @@
 {
-  "projectId": "madira-center",
-  "appId": "1:22121300838:web:9df66bd1c649f00621fea7",
-  "apiKey": "AIzaSyCDbmhqKZDT6_5SAwocOOxoghyd-5orXqs",
-  "authDomain": "madira-center.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-zanzibarlandledg-69c48a00-428e-401f-b601-8e89a10c4c59",
-  "storageBucket": "madira-center.firebasestorage.app",
-  "messagingSenderId": "22121300838",
+  "projectId": "zanzibar-land-ledger",
+  "appId": "1:594103109685:web:d9a4c1a02584461a44c97c",
+  "apiKey": "AIzaSyAiToszKoJQOs_z-xhOvH1b1Eq3_VzhdO4",
+  "authDomain": "zanzibar-land-ledger.firebaseapp.com",
+  "firestoreDatabaseId": "zanzibar-land-ledger-db",
+  "storageBucket": "zanzibar-land-ledger.firebasestorage.app",
+  "messagingSenderId": "594103109685",
   "measurementId": "",
-  "oAuthClientId": "22121300838-s1c6334ignh529iptgvjnu8luqedptgb.apps.googleusercontent.com",
+  "oAuthClientId": "594103109685-hpp6k7lgvij39npd0gi0i1428ej934h9.apps.googleusercontent.com",
   "recaptchaSiteKey": ""
 }

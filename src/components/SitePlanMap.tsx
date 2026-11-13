@@ -1,9 +1,13 @@
 import { type FC, type MouseEvent, useState, useRef } from 'react';
 import { LandPlot, LocationEstate } from '../types/land';
-import { ZoomIn, ZoomOut, RotateCcw, MapPin, Plus } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, MapPin, Plus, Pencil } from 'lucide-react';
 
 interface SitePlanMapProps {
   location: LocationEstate;
+  locations: LocationEstate[];
+  onSelectLocation: (locationId: string) => void;
+  onEditLocation: (location: LocationEstate) => void;
+  isAdmin?: boolean;
   plots: LandPlot[];
   selectedPlotId: string | null;
   onSelectPlot: (plot: LandPlot) => void;
@@ -12,6 +16,10 @@ interface SitePlanMapProps {
 
 export const SitePlanMap: FC<SitePlanMapProps> = ({
   location,
+  locations,
+  onSelectLocation,
+  onEditLocation,
+  isAdmin = false,
   plots,
   selectedPlotId,
   onSelectPlot,
@@ -34,27 +42,34 @@ export const SitePlanMap: FC<SitePlanMapProps> = ({
     onAddPlotAtCoords(Number(x.toFixed(1)), Number(y.toFixed(1)));
   };
 
-  if (!location.mapImageUrl) {
-    return (
-      <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
-        <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-3" />
-        <h3 className="text-base font-semibold text-slate-900 mb-1">
-          No Site Plan Image for {location.name}
-        </h3>
-        <p className="text-sm text-slate-500 max-w-md mx-auto">
-          Use the Plot Boxes view to manage parcels in {location.name}, or switch to Chwaka Kijindu to view the interactive 1:1200 site plan.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="h-full bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
       {/* Map Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b border-slate-200 bg-slate-50">
         <div className="flex items-center gap-4 text-xs text-slate-600">
-          <span className="font-medium text-slate-900">{location.name} Site Plan</span>
-          <span aria-hidden="true">·</span>
+          <select
+            value={location.id}
+            onChange={(e) => onSelectLocation(e.target.value)}
+            aria-label="Select site plan map"
+            className="font-medium text-slate-900 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900/15"
+          >
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.id}>
+                {loc.name} Site Plan
+              </option>
+            ))}
+          </select>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => onEditLocation(location)}
+              title="Edit current site"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
+            >
+              <Pencil className="w-3 h-3" />
+              Edit
+            </button>
+          )}
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-sm bg-emerald-600 inline-block" />
             Available
@@ -116,25 +131,47 @@ export const SitePlanMap: FC<SitePlanMapProps> = ({
       </div>
 
       {/* Full-height Map Canvas */}
-      <div className="flex-1 min-h-0 overflow-hidden bg-slate-100 p-3 sm:p-4 flex items-center justify-center">
+      <div className="flex-1 min-h-0 overflow-hidden bg-white p-8 sm:p-14 lg:p-16 flex items-center justify-center">
         <div
           ref={containerRef}
           onClick={handleImageClick}
           style={{
             transform: `scale(${zoom})`,
             transformOrigin: 'center center',
+            ...(!location.mapImageUrl
+              ? { aspectRatio: `${location.gridCols || 6} / ${location.gridRows || 4}` }
+              : {}),
           }}
-          className={`relative mx-auto transition-all duration-150 ${
+          className={`relative mx-auto ${
+            !location.mapImageUrl ? 'w-full max-w-4xl max-h-[calc(100vh-13rem)] bg-white border border-slate-200 rounded-lg' : ''
+          } ${
             pinMode ? 'cursor-crosshair' : 'cursor-default'
           }`}
         >
-          <img
-            src={location.mapImageUrl}
-            alt={`${location.name} Site Plan`}
-            referrerPolicy="no-referrer"
-            className="block max-w-full max-h-full h-auto rounded border border-slate-300 bg-white select-none"
-            draggable={false}
-          />
+          {location.mapImageUrl ? (
+            <img
+              src={location.mapImageUrl}
+              alt={`${location.name} Site Plan`}
+              referrerPolicy="no-referrer"
+              className="block max-w-full max-h-[calc(100vh-13rem)] w-auto h-auto bg-white select-none"
+              draggable={false}
+            />
+          ) : (
+            <div
+              className="w-full h-full grid gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden"
+              style={{
+                gridTemplateColumns: `repeat(${location.gridCols || 6}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${location.gridRows || 4}, minmax(0, 1fr))`,
+              }}
+            >
+              {Array.from({ length: (location.gridRows || 4) * (location.gridCols || 6) }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white hover:bg-slate-50 transition-colors"
+                />
+              ))}
+            </div>
+          )}
 
           {/* Interactive Plot Markers */}
           {mappedPlots.map((plot) => {

@@ -31,6 +31,8 @@ export interface LocationEstate {
   name: string;
   region: string;
   mapImageUrl?: string;
+  gridRows?: number;
+  gridCols?: number;
   description: string;
 }
 
@@ -58,4 +60,6 @@ export interface LandPlot {
   notes?: string;
   mapX?: number;
   mapY?: number;
+  country?: string;
+  imageUrl?: string;
 }
